@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang = "en">
+    <head>
+
+        <!-- CSS -->
+        <style>
+            * {
+                color: #fff;
+                margin: 0px;
+                font-family: monospace;
+            }
+            body {
+                background-color: #121212;
+                background-image: url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cg transform='rotate(45 32 32)'%3E%3Cpath d='M32 28 V36 M28 32 H36' stroke='%23222222' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            body, html {
+                height: 100%;
+            }
+            main {
+                display: flex;
+                flex-direction: column;
+                background-color: #1a1a1a;
+                border-radius: 10px;
+                width: 400px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 1px rgba(255, 255, 255, 0.05);
+                padding: 10px;
+                gap: 10px;
+                z-index: 10;
+            }
+            article {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                background-color: #0d0d0d;
+                border-radius: 10px;
+                padding: 5px 15px;
+            }
+            article > div {
+                display: flex;
+                flex-direction: column;
+            }
+            article > span:first-child {
+                font-size: 30px;
+            }
+            article > *:last-child {
+                margin-left: auto;
+                text-align: right;
+            }
+            .cursor-light {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                pointer-events: none;
+                z-index: 5;
+                background: radial-gradient(
+                    circle at var(--x, 50%) var(--y, 50%),
+                    rgba(255, 255, 255, 0.04) 0%,
+                    rgba(255, 255, 255, 0.01) 80px,
+                    transparent 150px
+                );
+                mix-blend-mode: screen;
+            }
+
+            /* Footer */
+            footer {
+                width: 100%;
+                text-align: center;
+                bottom: 10px;
+                position: absolute;
+            }
+            footer * {
+                color: #808080;
+            }
+            a {
+                transition: color .5s ease;
+                text-decoration: underline dotted;
+            }
+            a:hover {
+                color: #626262;
+            }
+        </style>
+
+        <title>d</title>
+    </head>
+    <body>
+        <div class="cursor-light"></div>
+        <main>
+            <article>
+                <span>&lambda;</span>
+                <div>
+                    <span>Lambda</span>
+                    <span>Grenada, MS</span>
+                </div>
+                <div>
+                    <span>5ms</span>
+                </div>
+            </article>
+            <article>
+                <span>&theta;</span>
+                <div>
+                    <span>Theta</span>
+                    <span>Atlanta, GA</span>
+                </div>
+                <div>
+                    <span>42ms</span>
+                    <span>353mi</span>
+                </div>
+            </article>
+            <article>
+                <span>&delta;</span>
+                <div>
+                    <span>Delta</span>
+                    <span>Toronto, CA</span>
+                </div>
+                <div>
+                    <span>84ms</span>
+                    <span>1065mi</span>
+                </div>
+            </article>
+            <article>
+                <span>&upsilon;</span>
+                <div>
+                    <span>Upsilon</span>
+                    <span>Paris, FR</span>
+                </div>
+                <div>
+                    <span>153ms</span>
+                    <span>4752mi</span>
+                </div>
+            </article>
+        </main>
+
+        <footer><span>Copyright (c) 2025 <a href = "https://iipython.dev">iiPython</a></span></footer>
+
+        <!-- JS -->
+        <script>
+            const light = document.querySelector(".cursor-light");
+            document.addEventListener("mousemove", (e) => {
+                setTimeout(() => {
+                    light.style.setProperty("--x", `${e.clientX}px`);
+                    light.style.setProperty("--y", `${e.clientY}px`);
+                }, 50);
+            });
+        </script>
+    </body>
+</html>
