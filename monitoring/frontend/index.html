@@ -34,11 +34,14 @@
                 align-items: center;
             }
             
-            /* Server pings */
-            #servers {
+            /* Node pings */
+            #nodes {
                 display: flex;
                 flex-direction: column;
                 gap: 10px;
+            }
+            article.dead-node * {
+                color: #606060;
             }
             article {
                 display: flex;
@@ -82,6 +85,8 @@
             /* Tabs */
             nav {
                 height: fit-content;
+                display: flex;
+                gap: 10px;
             }
             nav > span {
                 color: #808080;
@@ -145,6 +150,17 @@
                 border-bottom: 1px dotted #424242;
                 width: 100%;
             }
+
+            /* HTTP */
+            span.http-ok {
+                color: #19d25da7 !important;
+            }
+            span.http-info {
+                color: #19b3d2a7 !important;
+            }
+            span.http-bad {
+                color: #d42d07a7 !important;
+            }
         </style>
 
         <title>d</title>
@@ -157,87 +173,38 @@
         <!-- Main object -->
         <main>
 
-            <!-- Individual servers -->
-            <div id = "servers">
-                <article>
-                    <span>&lambda;</span>
-                    <div>
-                        <span>Lambda</span>
-                        <span>Grenada, MS</span>
-                    </div>
-                    <div>
-                        <span>TTFB: 32ms</span>
-                        <span>RWL: 28ms</span>
-                    </div>
-                </article>
-                <article>
-                    <span>&theta;</span>
-                    <div>
-                        <span>Theta</span>
-                        <span>Atlanta, GA</span>
-                    </div>
-                    <div>
-                        <span>TTFB: 18ms</span>
-                        <span>RWL: 24ms</span>
-                    </div>
-                </article>
-                <article>
-                    <span>&delta;</span>
-                    <div>
-                        <span>Delta</span>
-                        <span>Toronto, CA</span>
-                    </div>
-                    <div>
-                        <span>TTFB: 63ms</span>
-                        <span>RWL: 45ms</span>
-                    </div>
-                </article>
-                <article>
-                    <span>&upsilon;</span>
-                    <div>
-                        <span>Upsilon</span>
-                        <span>Paris, FR</span>
-                    </div>
-                    <div>
-                        <span>TTFB: 94ms</span>
-                        <span>RWL: 57ms</span>
-                    </div>
-                </article>
-            </div>
+            <!-- Individual nodes -->
+            <div id = "nodes"></div>
 
             <!-- Specifications -->
             <div id = "specs">
-                <nav>
-                    <span class = "active">Main</span>
-                    <span>LAN</span>
-                    <span>Administer</span>
-                </nav>
+                <nav></nav>
                 <hr>
                 <div>
                     <span>TTFB<sup>1</sup></span>
-                    <span>30ms</span>
+                    <span id = "tfb"></span>
                 </div>
                 <div>
                     <span>Average RWL<sup>2</sup></span>
-                    <span>28ms</span>
+                    <span id = "rwl"></span>
                 </div>
                 <hr>
                 <div>
                     <span>Compute Time</span>
-                    <span>26ms</span>
+                    <span id = "cpt"></span>
                 </div>
                 <div>
-                    <span>Average Upload Latency</span>
-                    <span>16ms</span>
+                    <span>TCP Connect</span>
+                    <span id = "tcp"></span>
                 </div>
                 <div>
-                    <span>Average Download Latency</span>
-                    <span>19ms</span>
+                    <span>TLS Handshake</span>
+                    <span id = "tls"></span>
                 </div>
                 <hr>
                 <div>
                     <span>Status Code</span>
-                    <span style = "color: #19d25da7">200 OK</span>
+                    <span id = "htc"></span>
                 </div>
             </div>
         </main>
