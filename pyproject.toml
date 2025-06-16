@@ -1,0 +1,10 @@
+[project]
+name = "iipython-monitoring"
+version = "0.1.0"
+description = "Keep track of server performance using multiple nodes around the globe."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.115.12",
+    "uvicorn[standard]>=0.34.3",
+]

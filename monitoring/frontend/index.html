@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang = "en">
+    <head>
+
+        <!-- CSS -->
+        <style>
+            * {
+                color: #fff;
+                margin: 0px;
+                font-family: monospace;
+            }
+
+            /* Page */
+            body {
+                background-color: #121212;
+                background-image: url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cg transform='rotate(45 32 32)'%3E%3Cpath d='M32 28 V36 M28 32 H36' stroke='%23222222' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            body, html {
+                height: 100%;
+            }
+
+            /* Box */
+            main {
+                display: flex;
+                background-color: #1a1a1a;
+                border-radius: 10px;
+                width: 700px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 1px rgba(255, 255, 255, 0.05);
+                padding: 10px;
+                z-index: 10;
+                align-items: center;
+            }
+            
+            /* Server pings */
+            #servers {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            article {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                background-color: #0d0d0d;
+                border-radius: 10px;
+                padding: 5px 15px;
+                width: 300px;
+            }
+            article > div {
+                display: flex;
+                flex-direction: column;
+            }
+            article > span:first-child {
+                font-size: 30px;
+            }
+            article > *:last-child {
+                margin-left: auto;
+                text-align: right;
+            }
+
+            /* Spotlight */
+            #spotlight {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                pointer-events: none;
+                z-index: 5;
+                background: radial-gradient(
+                    circle at var(--x, 50%) var(--y, 50%),
+                    #ffffff0a 0%,
+                    #ffffff03 80px,
+                    transparent 150px
+                );
+                mix-blend-mode: screen;
+            }
+
+            /* Tabs */
+            nav {
+                height: fit-content;
+            }
+            nav > span {
+                color: #808080;
+                cursor: pointer;
+                transition: all .5s ease;
+                border-bottom: 1px solid transparent;
+            }
+            nav > span:hover {
+                color: #929292;
+                cursor: pointer;
+                border-color: #424242;
+            }
+            nav > span.active {
+                color: #606060;
+                font-weight: bold;
+                border-color: #606060;
+            }
+
+            /* Footer */
+            footer {
+                width: 100%;
+                text-align: center;
+                bottom: 10px;
+                position: absolute;
+            }
+            footer * {
+                color: #808080;
+            }
+            a {
+                transition: color .5s ease;
+                text-decoration: underline dotted;
+            }
+            a:hover {
+                color: #626262;
+            }
+
+            /* Specifications */
+            #specs {
+                flex: 1;
+                gap: 11px;
+                padding-left: 10px;
+                display: flex;
+                flex-direction: column;
+            }
+            #specs > div {
+                gap: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            #specs > div span {
+                color: #808080;
+                white-space: nowrap;
+            }
+            sup {
+                color: #808080;
+                font-size: 7px;
+            }
+            hr {
+                border: transparent;
+                border-bottom: 1px dotted #424242;
+                width: 100%;
+            }
+        </style>
+
+        <title>d</title>
+    </head>
+    <body>
+
+        <!-- Spotlight -->
+        <div id = "spotlight"></div>
+
+        <!-- Main object -->
+        <main>
+
+            <!-- Individual servers -->
+            <div id = "servers">
+                <article>
+                    <span>&lambda;</span>
+                    <div>
+                        <span>Lambda</span>
+                        <span>Grenada, MS</span>
+                    </div>
+                    <div>
+                        <span>TTFB: 32ms</span>
+                        <span>RWL: 28ms</span>
+                    </div>
+                </article>
+                <article>
+                    <span>&theta;</span>
+                    <div>
+                        <span>Theta</span>
+                        <span>Atlanta, GA</span>
+                    </div>
+                    <div>
+                        <span>TTFB: 18ms</span>
+                        <span>RWL: 24ms</span>
+                    </div>
+                </article>
+                <article>
+                    <span>&delta;</span>
+                    <div>
+                        <span>Delta</span>
+                        <span>Toronto, CA</span>
+                    </div>
+                    <div>
+                        <span>TTFB: 63ms</span>
+                        <span>RWL: 45ms</span>
+                    </div>
+                </article>
+                <article>
+                    <span>&upsilon;</span>
+                    <div>
+                        <span>Upsilon</span>
+                        <span>Paris, FR</span>
+                    </div>
+                    <div>
+                        <span>TTFB: 94ms</span>
+                        <span>RWL: 57ms</span>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Specifications -->
+            <div id = "specs">
+                <nav>
+                    <span class = "active">Main</span>
+                    <span>LAN</span>
+                    <span>Administer</span>
+                </nav>
+                <hr>
+                <div>
+                    <span>TTFB<sup>1</sup></span>
+                    <span>30ms</span>
+                </div>
+                <div>
+                    <span>Average RWL<sup>2</sup></span>
+                    <span>28ms</span>
+                </div>
+                <hr>
+                <div>
+                    <span>Compute Time</span>
+                    <span>26ms</span>
+                </div>
+                <div>
+                    <span>Average Upload Latency</span>
+                    <span>16ms</span>
+                </div>
+                <div>
+                    <span>Average Download Latency</span>
+                    <span>19ms</span>
+                </div>
+                <hr>
+                <div>
+                    <span>Status Code</span>
+                    <span style = "color: #19d25da7">200 OK</span>
+                </div>
+            </div>
+        </main>
+
+        <footer><span>Copyright (c) 2025 <a href = "https://iipython.dev">iiPython</a></span></footer>
+
+        <!-- JS -->
+        <script async defer src = "/js/spotlight.js"></script>
+        <script async defer src = "/js/fetch.js"></script>
+    </body>
+</html>
