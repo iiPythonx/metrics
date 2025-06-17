@@ -162,7 +162,7 @@ while True:
         with HTTP_OPENER.open(request.Request(
             f"{sys.argv[1].rstrip('/')}/v1/private/metrics",
             data = json.dumps(payload).encode(),
-            headers = {"Authorization": sys.argv[2], "Content-Type": "application/json"},
+            headers = {"Authorization": sys.argv[2], "Content-Type": "application/json", "User-Agent": USER_AGENT},
             method = "POST"
         )) as response:
             print("[API]", "Metrics uploaded!" if response.getcode() == 200 else "Metric upload failed!")
