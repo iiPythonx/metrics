@@ -25,6 +25,8 @@ log("CORE", "iiPython Monitoring v0.1.0");
     const nodes = (await (await fetch("/v1/nodes")).json()).data;
     log("API", `Backend has ${nodes.length} node(s), ${nodes.filter(node => node.live).length} of which are active.`);
 
+    while (nodes.length < 4) nodes.push({ icon: "-" });
+
     for (const node of nodes) {
         const element = document.createElement("article");
         if (!node.live) element.classList.add("dead-node");
@@ -32,8 +34,8 @@ log("CORE", "iiPython Monitoring v0.1.0");
         element.innerHTML = `
             <span>${node.icon}</span>
             <div>
-                <span>${node.name}</span>
-                <span>${node.info}</span>
+                <span>${node.name || ''}</span>
+                <span>${node.info || ''}</span>
             </div>
             <div>
                 <span class = "ttfb"></span>
