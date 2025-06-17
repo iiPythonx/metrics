@@ -13,7 +13,6 @@ from fastapi.staticfiles import StaticFiles
 
 # Initialization
 app = FastAPI(openapi_url = None)
-app.state.metrics = {}
 
 # Configuration
 config_file = Path.cwd() / "settings.json"
@@ -23,6 +22,7 @@ if not config_file.is_file():
 config = loads(config_file.read_text())
 
 # Node reverse mapping
+app.state.metrics = {endpoint["name"]: {"nodes": {}, "overall": {}} for endpoint in config["endpoints"]}
 reversed_nodes = {v["auth"]: (v["lock"], v["name"]) for v in config["nodes"]}
 
 # Modeling
@@ -47,38 +47,28 @@ async def api_nodes() -> JSONResponse:
 
 @app.get("/v1/metrics")
 async def api_metrics() -> JSONResponse:
-    metrics = {}
-    for endpoint in config["endpoints"]:
-        metrics[endpoint["name"]] = {"nodes": {}, "overall": {}}
+    for data in app.state.metrics.values():
 
-    # Global metrics
-    for payload in app.state.metrics.values():
-        for endpoint, data in payload.items():
-            if endpoint not in metrics:
-                metrics[endpoint] = {}
+        # Throw together node data
+        results = {}
+        for node_data in data["nodes"].values():
+            for field, value in node_data.items():
+                results[field] = results.get(field, []) + [value]
 
-            for field, value in data.items():
-                if field not in metrics[endpoint]:
-                    metrics[endpoint]["overall"][field] = []
+        # Exclude endpoints with bad data
+        if not results:
+            data["overall"] = {}
+            continue
 
-                metrics[endpoint]["overall"][field].append(value)
-
-    for endpoint, data in metrics.items():
-        for field, values in data["overall"].items():
-            if field == "status":
-                metrics[endpoint]["overall"][field] = max(set(values), key = values.count)
-                continue
-
-            metrics[endpoint]["overall"][field] = round(sum(values) / len(values))
-
-    # Per-node metrics
-    for auth, payload in app.state.metrics.items():
-        for endpoint, data in payload.items():
-            metrics[endpoint]["nodes"][reversed_nodes[auth][1]] = data
+        # Compute average, excluding HTTP status
+        data["overall"] = {
+            k: round(sum(v) / len(v))
+            for k, v in results.items() if k != "htc"
+        } | {"htc": max(set(results["htc"]), key = results["htc"].count)}
 
     return JSONResponse({
         "code": 200,
-        "data": metrics
+        "data": app.state.metrics
     })
 
 async def verify_private(request: Request, authorization: Annotated[str, Header()]) -> str:
@@ -106,7 +96,10 @@ async def api_private_endpoints() -> JSONResponse:
 
 @app.post("/v1/private/metrics")
 async def api_private_metrics(payload: dict[str, Metric], authorization: str = Depends(verify_private)) -> JSONResponse:
-    app.state.metrics[authorization] = {k: v.model_dump() for k, v in payload.items()}
+    node_name = reversed_nodes[authorization][1]
+    for endpoint, data in payload.items():
+        app.state.metrics[endpoint]["nodes"][node_name] = data.model_dump()
+
     return JSONResponse({"code": 200})
 
 # Static files
