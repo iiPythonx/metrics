@@ -1,0 +1,5 @@
+[project]
+    mapping = "metrics/frontend:build"
+
+[plugins.minify]
+    suffixes = [".js", ".css"]

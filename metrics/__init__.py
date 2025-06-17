@@ -11,13 +11,29 @@ from fastapi import FastAPI, HTTPException, Header, Depends, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
+# Attempt to build with Nova
+# No, you should not do this if you want your app to actually work consistently...
+#  -> I get a pass because I built it :3
+try:
+    from nova.__main__ import create_builder
+    create_builder(False).wrapped_build()
+
+    frontend_path = Path("build")
+
+except ImportError:
+    exit("iiPython Metrics: Nova failed to initialize, most likely due to a missing `nova.toml` file. Please double check and relaunch.")
+
+except Exception:
+    print("Nova failed to make a valid build, frontend will be uncompressed!")
+    frontend_path = Path(__file__).parent / "frontend"
+
 # Initialization
 app = FastAPI(openapi_url = None)
 
 # Configuration
 config_file = Path.cwd() / "settings.json"
 if not config_file.is_file():
-    exit("iiPython Monitoring requires a `settings.json` file in the current directory.")
+    exit("iiPython Metrics: THe required `settings.json` file was not found.")
 
 config = loads(config_file.read_text())
 
@@ -103,4 +119,4 @@ async def api_private_metrics(payload: dict[str, Metric], authorization: str = D
     return JSONResponse({"code": 200})
 
 # Static files
-app.mount("/", StaticFiles(directory = Path(__file__).parent / "frontend", html = True))
+app.mount("/", StaticFiles(directory = frontend_path, html = True))

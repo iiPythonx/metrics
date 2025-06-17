@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang = "en">
+    <head>
+        <meta charset = "utf-8">
+        <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+
+        <!-- CSS -->
+        <link rel = "stylesheet" href = "/index.css" />
+
+        <title>iiPython / Metrics</title>
+    </head>
+    <body>
+
+        <!-- Spotlight -->
+        <div id = "spotlight"></div>
+
+        <!-- Main object -->
+        <main>
+
+            <!-- Individual nodes -->
+            <div id = "nodes"></div>
+
+            <!-- Specifications -->
+            <div id = "specs">
+                <nav></nav>
+                <hr>
+                <div>
+                    <span>TTFB<sup>1</sup></span>
+                    <span id = "tfb"></span>
+                </div>
+                <div>
+                    <span>Average RWL<sup>2</sup></span>
+                    <span id = "rwl"></span>
+                </div>
+                <hr>
+                <div>
+                    <span>Compute Time</span>
+                    <span id = "cpt"></span>
+                </div>
+                <div>
+                    <span>TCP Connect</span>
+                    <span id = "tcp"></span>
+                </div>
+                <div>
+                    <span>TLS Handshake</span>
+                    <span id = "tls"></span>
+                </div>
+                <hr>
+                <div>
+                    <span>Status Code</span>
+                    <div style = "position: relative;">
+                        <span id = "htc"></span>
+                        <div id = "popup"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer><span>Copyright (c) 2025 <a href = "https://iipython.dev">iiPython</a></span></footer>
+
+        <!-- JS -->
+        <script async defer src = "/js/spotlight.js"></script>
+        <script async defer src = "/js/fetch.js"></script>
+    </body>
+</html>
