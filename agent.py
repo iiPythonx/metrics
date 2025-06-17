@@ -116,13 +116,13 @@ while True:
 
     print(f"[Timing] Next target interval @ {target}")
 
-    # time.sleep((target - now).total_seconds())
+    time.sleep((target - now).total_seconds())
 
     # Fetch endpoints from upstream
     print("[API] Checking endpoint information...")
     with request.urlopen(request.Request(
         f"{sys.argv[1].rstrip('/')}/v1/private/endpoints",
-        headers = {"Authorization": sys.argv[2]}
+        headers = {"Authorization": sys.argv[2], "User-Agent": USER_AGENT}
     )) as response:
         endpoints = json.loads(response.read())["data"]
         print(f"    | {len(endpoints)} endpoint(s) were returned.")
