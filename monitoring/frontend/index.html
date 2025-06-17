@@ -151,6 +151,35 @@
                 width: 100%;
             }
 
+            /* Status code */
+            #htc {
+                cursor: help;
+                border-bottom: 1px dotted;
+            }
+            #htc:hover + #popup {
+                opacity: 1;
+            }
+            #popup {
+                top: calc(100% + 10px);
+                left: 0px;
+                position: absolute;
+                opacity: 0;
+                z-index: 15;
+                background-color: #121212;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 1px rgba(255, 255, 255, 0.05);
+                padding: 10px;
+                gap: 10px;
+                transition: opacity .4s ease;
+            }
+            #popup > div {
+                display: flex;
+                flex-direction: column;
+            }
+            #popup span {
+                text-align: center;
+            }
+
             /* HTTP */
             span.http-ok {
                 color: #19d25da7 !important;
@@ -204,7 +233,10 @@
                 <hr>
                 <div>
                     <span>Status Code</span>
-                    <span id = "htc"></span>
+                    <div style = "position: relative;">
+                        <span id = "htc"></span>
+                        <div id = "popup"></div>
+                    </div>
                 </div>
             </div>
         </main>

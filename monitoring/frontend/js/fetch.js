@@ -18,6 +18,9 @@ const log = (() => {
 
 log("CORE", "iiPython Monitoring v0.1.0");
 
+// HTTP status color calculations
+const httpStatusColor = (code) => 200 <= code && code <= 299 ? "http-ok" : (code <= 399 ? "http-info" : "http-bad");
+
 // Launch async session
 (async () => {
 
@@ -38,7 +41,7 @@ log("CORE", "iiPython Monitoring v0.1.0");
                 <span>${node.info || ''}</span>
             </div>
             <div>
-                <span class = "ttfb"></span>
+                <span class = "tfb"></span>
                 <span class = "rwl"></span>
             </div>
         `;
@@ -53,12 +56,15 @@ log("CORE", "iiPython Monitoring v0.1.0");
         for (const tab of document.querySelectorAll("[data-tab]")) tab.classList.remove("active");
         document.querySelector(`[data-tab = "${tab}"]`).classList.add("active");
 
+        const popupElement = document.getElementById("popup");
+
         // Handle empty data
         if (Object.keys(metrics[tab].nodes).length === 0) {
             for (const span of document.querySelectorAll("span[id]")) span.innerText = "N/A";
             document.getElementById("htc").classList = "";
-            document.querySelector(`[data-node-name] .rwl`).innerText = `RWL: N/A`;
-            document.querySelector(`[data-node-name] .ttfb`).innerText = `TTFB: N/A`;
+            popupElement.style.display = "none";
+            for (const elem of document.querySelectorAll(`[data-node-name]:not(.dead-node) .rwl`)) elem.innerText = `RWL: N/A`;
+            for (const elem of document.querySelectorAll(`[data-node-name]:not(.dead-node) .tfb`)) elem.innerText = `TTFB: N/A`;
             return;
         }
 
@@ -79,14 +85,22 @@ log("CORE", "iiPython Monitoring v0.1.0");
                 405: "Method Not Allowed",
             }[overall[field]] || "";
             document.getElementById(field).innerText = `${overall[field]} ${name}`;
-            document.getElementById(field).classList = 200 <= overall[field] && overall[field] <= 299 ? "http-ok" : (overall[field] <= 399 ? "http-info" : "http-bad");
+            document.getElementById(field).classList = httpStatusColor(overall[field]);
         };
 
         // Fetch per-node data
+        popupElement.style.display = "flex";
+        popupElement.innerHTML = "";
+
         for (const node in metrics[tab].nodes) {
             const data = metrics[tab].nodes[node];
             document.querySelector(`[data-node-name = "${node}"] .rwl`).innerText = `RWL: ${data.rwl}ms`;
-            document.querySelector(`[data-node-name = "${node}"] .ttfb`).innerText = `TTFB: ${data.tfb}ms`;
+            document.querySelector(`[data-node-name = "${node}"] .tfb`).innerText = `TTFB: ${data.tfb}ms`;
+
+            // Create HTTP status popup
+            const status = document.createElement("div");
+            status.innerHTML = `<span>${nodes.filter(n => n.name === node)[0].icon}</span><span class = "${httpStatusColor(data.htc)}">${data.htc}</span>`;
+            popupElement.appendChild(status);
         }
     }
 
