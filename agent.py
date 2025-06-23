@@ -11,10 +11,12 @@ from datetime import datetime, timedelta
 from dataclasses import dataclass
 
 from urllib import request
+from urllib.error import URLError
 from urllib.parse import urlparse
 
 # Initialization
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+DEBUG_MODE = "--oneshot" in sys.argv
 
 @dataclass
 class TimingInformation:
@@ -48,6 +50,18 @@ class NonRaisingHTTPErrorProcessor(request.HTTPErrorProcessor):
 HTTP_OPENER = request.build_opener(NonRaisingHTTPErrorProcessor)
 
 # Handling
+def mkrequest(endpoint: str, headers: dict[str, str] = {}, **kwargs):
+    try:
+        return HTTP_OPENER.open(request.Request(
+            f"{sys.argv[1].rstrip('/')}/v1{endpoint}",
+            headers = headers | {"Authorization": sys.argv[2], "User-Agent": USER_AGENT},
+            **kwargs
+        ))
+
+    except URLError:
+        print(f"[API] Request to ${endpoint} failed...")
+        exit(1)
+
 def parse_timing(timing: str | None) -> TimingInformation:
     if not timing:
         raise NotCloudflare
@@ -116,14 +130,12 @@ while True:
 
     print(f"[Timing] Next target interval @ {target}")
 
-    time.sleep((target - now).total_seconds())
+    if not DEBUG_MODE:
+        time.sleep((target - now).total_seconds())\
 
     # Fetch endpoints from upstream
     print("[API] Checking endpoint information...")
-    with request.urlopen(request.Request(
-        f"{sys.argv[1].rstrip('/')}/v1/private/endpoints",
-        headers = {"Authorization": sys.argv[2], "User-Agent": USER_AGENT}
-    )) as response:
+    with mkrequest("/private/endpoints") as response:
         endpoints = json.loads(response.read())["data"]
         print(f"    | {len(endpoints)} endpoint(s) were returned.")
 
@@ -159,10 +171,8 @@ while True:
             print(f"     | Compute: {results['cpt']}ms | TTFB: {results['tfb']}ms | Code: HTTP {status}")
 
         # Send off to metric site
-        with HTTP_OPENER.open(request.Request(
-            f"{sys.argv[1].rstrip('/')}/v1/private/metrics",
-            data = json.dumps(payload).encode(),
-            headers = {"Authorization": sys.argv[2], "Content-Type": "application/json", "User-Agent": USER_AGENT},
-            method = "POST"
-        )) as response:
+        with mkrequest("/private/metrics", headers = {"Content-Type": "application/json"}, data = json.dumps(payload).encode(), method = "POST") as response:
             print("[API]", "Metrics uploaded!" if response.getcode() == 200 else "Metric upload failed!")
+
+        if DEBUG_MODE:
+            exit()
