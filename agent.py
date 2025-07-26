@@ -104,9 +104,15 @@ def calculate(url: str) -> tuple[list[dict[str, float]], int]:
         # Send actual HTTP request
         start = time.perf_counter()
         with HTTP_OPENER.open(request.Request(url, method = "GET", headers = {"User-Agent": USER_AGENT})) as response:
-            payload["cpt"] = parse_timing(response.getheader("Server-Timing")).rtt
             payload["htc"] = response.getcode()
             payload["rwl"] = time.perf_counter() - start
+
+            # Attempt to calculate the server side compute time from Cloudflare Server-Timing
+            try:
+                payload["cpt"] = parse_timing(response.getheader("Server-Timing")).rtt
+
+            except NotCloudflare:
+                pass
 
         # Forced sleep to prevent congestion on the target's side
         time.sleep(1)
@@ -141,13 +147,8 @@ while True:
 
         payload = {}
         for endpoint in endpoints:
-            try:
-                print("[Check]", endpoint["url"])
-                results, status = calculate(endpoint["url"])
-
-            except NotCloudflare:
-                print("      | Skipping due to lack of Cloudflare Server-Timing.")
-                continue
+            print("[Check]", endpoint["url"])
+            results, status = calculate(endpoint["url"])
 
             # Convert and average results
             flattened = {}

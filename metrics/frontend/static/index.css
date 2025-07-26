@@ -11,6 +11,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    /* This ensures the current notice will be aligned underneath, as it should be. */
+    gap: 15px;
+    flex-direction: column;
 }
 body, html {
     height: 100%;
@@ -184,4 +188,32 @@ span.http-info {
 }
 span.http-bad {
     color: #d42d07a7 !important;
+}
+
+/* Notice */
+svg {
+    fill: #fff;
+}
+#notice {
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 1px rgba(255, 255, 255, 0.05);
+
+    /* Hide by default */
+    height: 0px;
+    opacity: 0;
+    transition: height .5s ease, opacity .5s ease;
+
+    /* Alignment */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+#notice.notice-yellow {
+    background: rgba(117, 119, 17, 0.5);
+    border: 2px solid rgb(117, 119, 17);
+}
+#notice.notice-red {
+    background: rgba(147, 20, 20, .5);
+    border: 2px solid rgb(147, 20, 20);
 }

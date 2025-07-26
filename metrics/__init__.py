@@ -1,15 +1,19 @@
 # Copyright (c) 2025 iiPython
 
 # Modules
+import asyncio
 from json import loads
 from pathlib import Path
-from typing import Annotated
+from contextlib import asynccontextmanager
+from typing import Annotated, AsyncGenerator
 
 from pydantic import BaseModel
 
 from fastapi import FastAPI, HTTPException, Header, Depends, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+
+from metrics.plugins import PLUGINS
 
 # Attempt to build with Nova
 # No, you should not do this if you want your app to actually work consistently...
@@ -27,8 +31,39 @@ except Exception:
     print("Nova failed to make a valid build, frontend will be uncompressed!")
     frontend_path = Path(__file__).parent / "frontend"
 
+# Handle plugins
+async def launch_plugins(app: FastAPI) -> None:
+    try:
+        while True:
+
+            # Calculate the latest notice
+            result = None
+            for plugin in PLUGINS:
+                result = plugin.calculate_notice()
+                if result is not None:
+                    break
+
+            # Go ahead and write it to state
+            app.state.notice = result
+
+            # And then wait
+            await asyncio.sleep(300)  # 5 minutes
+
+    except asyncio.CancelledError:
+        return
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator:
+    task = asyncio.create_task(launch_plugins(app))
+    yield
+
+    # Kill and wait
+    task.cancel()
+    await task
+
 # Initialization
-app = FastAPI(openapi_url = None)
+app = FastAPI(openapi_url = None, lifespan = lifespan)
+app.state.notice = None
 
 # Configuration
 config_file = Path.cwd() / "settings.json"
@@ -51,6 +86,13 @@ class Metric(BaseModel):
     htc: int
 
 # Routing
+@app.get("/v1/notice")
+async def api_notice() -> JSONResponse:
+    return JSONResponse({
+        "code": 200,
+        "data": app.state.notice
+    })
+
 @app.get("/v1/nodes")
 async def api_nodes() -> JSONResponse:
     return JSONResponse({
